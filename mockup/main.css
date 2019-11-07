@@ -1,0 +1,25 @@
+.audiowide {
+	font-family: 'Audiowide', cursive;
+}
+.roboto {
+	font-family: 'Roboto', cursive;
+}
+.header {
+	font-size: 96px;
+  margin-top: 48px;
+  margin-bottom: 48px;
+}
+.slide-title {
+	margin-bottom: 15px
+}
+.game-img {
+  width: 460px;
+  height: 215px;
+}
+
+/* Color Theme Swatches in Hex */
+.Distant-Planet--1 { background-color: #F291D8 !important; }
+.Distant-Planet--2 { background-color: #7B4BBF !important; }
+.Distant-Planet--3 { background-color: #142273 !important;  }
+.Distant-Planet--4 { background-color: #0E2159 !important; }
+.Distant-Planet--5 { background-color: #13C9F2 !important; }
