@@ -5,6 +5,7 @@
   <title>1StopGameRatings</title>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -12,6 +13,7 @@
 
 </head>
 <body style="background-color:  #0E2159 !important">
+
 <div class="p-3 mb-2  text-white">
   </br>
   <h1 style="text-align: center; ">1StopGameRatings</h1>
@@ -26,15 +28,14 @@
       <div class="col-4">
         <div style="text-align: center">
 
-            <form class="form-inline my-2 my-sm-0">
-
-
-
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <form method="get" action="{{ url_for('results') }}" class="form-inline my-2 my-sm-0">
+              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="searchterm">
               <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
-              <a class="btn btn-dark" href="#" role="button">BM25</a>
-              <a class="btn btn-dark" href="#" role="button">Whoosh</a>
-            </form>
+              <select class="custom-select" name="searchtype" value="0">
+                <option value="0">Whoosh!</option>
+                <option value="1">Custom</option>
+              </select>
+           </form> 
 
           <!-- search box whe search is pushed it refreshes the page. need to take input from search box and run through
           search code and print out results as an enbeded page with next page buttens-->
@@ -56,37 +57,46 @@
     <a class="btn btn-transparent text-white" href="https://www.metacritic.com/game/pc" role="button">Metacritic</a>
     <a class="btn btn-transparent text-white" href="https://www.ign.com/pc" role="button">IGN</a>
     <a class="btn btn-transparent text-white" href="https://www.pcgamer.com" role="button">PC Gamer</a>
-    <a class="btn btn-transparent text-white" href="aboutus.html" role="button">About Us</a>
+    <form method="get" action="{{url_for('aboutus')}}">
+      <button type="submit" class="btn btn-transparent text-white">About Us</button>
+    </form>
 </div>
 
 </div>
 
 
-
+{% if query %}
 <div class="p-3 mb-2 bg-transparent text-white">
 
     <div style="text-align: center">
-      <h4>Results</h4>
-
-      <p>10 results per page</br>
-      <li class="nav-item">
-        <a class="nav-link" href="gamepage.html">Name of Game from results </a>
-      </li>
-      </p>
-
-      <div style="text-align: center">
-        </br>
-        <a class="btn btn-dark" href="#" role="button">1</a>
-        <a class="btn btn-dark" href="#" role="button">2</a>
-        <a class="btn btn-dark" href="#" role="button">3</a>
-
-
-
-      </div>
+      <h4>Results for <strong>{{query}}</strong></h4>
+      {{ pagination.info }}
+      <table id="results" class="table table-sm" style="color: white">
+        <thead>
+          <tr>
+            <th class="th-sm">Name</th>
+            <th class="th-sm">Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for id, name, rating in results %}
+          <tr>
+            <td>
+                <form method="get" action="{{url_for('game')}}">
+                  <button type="submit" name="game" class="btn btn-link" value="{{id}}">{{name}}</button>
+                </form>
+            </td>
+            <td>
+              {{rating}}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {{ pagination.links }}
 
 </div>
-
-
+{% endif %}
 
 </body>
 </html>

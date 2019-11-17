@@ -15,7 +15,9 @@
 <div class="p-3 mb-2  ">
   <div class=" text-white">
   <div style="text-align: center">
-    <a class="btn btn-transparent text-white" href="index.html" role="button">Home</a>
+      <form method="get" action="{{url_for('home')}}">
+        <button type="submit" class="btn btn-transparent text-white">Home</button>
+      </form>
     <!--<a class="btn btn-transparent text-white" href="allgames.html" role="button">All Games</a>-->
     <a class="btn btn-transparent text-white" href="https://store.steampowered.com" role="button">Steam</a>
     <a class="btn btn-transparent text-white" href="https://www.metacritic.com/game/pc" role="button">Metacritic</a>
@@ -23,7 +25,7 @@
     <a class="btn btn-transparent text-white" href="https://www.pcgamer.com" role="button">PC Gamer</a>
   </div>
     <!-- have name of Game scraped put here-->
-  <h1 style="text-align: center; "id=Gamename"></br>Name of Game</br></br></h1>
+  <h1 style="text-align: center; "id=Gamename"></br>{{gameid}}</br></br></h1>
 
   </div>
 
