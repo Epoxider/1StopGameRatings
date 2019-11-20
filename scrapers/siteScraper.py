@@ -23,7 +23,8 @@ def addRating(game, rating):
 
 def get_IGN_Review(game):
     try:
-        ignSauce  = urllib.request.urlopen('https://www.ign.com/games/'+game).read()
+        ignURL = 'https://www.ign.com/games/'+game
+        ignSauce  = urllib.request.urlopen(ignURL).read()
         ignSoup = bs.BeautifulSoup(ignSauce, 'lxml')
         rating = ignSoup.find("span", {"class": "hexagon-content"})
 
@@ -33,10 +34,10 @@ def get_IGN_Review(game):
         except Exception as e:
             rating = rating.text
 
-        return rating
+        return rating, ignURL
 
     except Exception as e:
-        return -1.0
+        return -1.0, ''
 
 
 def print_IGN_Review(game):
@@ -51,7 +52,8 @@ print_IGN_Review('world-of-warcraft')
 
 def get_PCGamer_Review(game):
     try:
-        pcSauce  = urllib.request.urlopen('https://www.pcgamer.com/'+game+'-review/').read()
+        pcURL = 'https://www.pcgamer.com/'+game+'-review/'
+        pcSauce  = urllib.request.urlopen(pcURL).read()
         pcSoup = bs.BeautifulSoup(pcSauce, 'lxml')
 
         rating = pcSoup.find("span", {"class": "score score-long"})
@@ -62,10 +64,10 @@ def get_PCGamer_Review(game):
         except Exception as e:
             rating = rating.text
 
-        return rating
+        return rating, pcURL
 
     except Exception as e:
-        return -1.0
+        return -1.0, ''
 
 
 def print_PC_Review(game):
@@ -135,4 +137,4 @@ def processGameList(db):
 
 
 
-processGameList(db)
+#processGameList(db)
