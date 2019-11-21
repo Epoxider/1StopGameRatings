@@ -55,6 +55,9 @@ def game():
 	print(request.args)
 	data = request.args
 	gameid = data.get('game')
+	#give id
+	#find id
+	#push game info to template
 	return render_template('gamepage.html', gameid=gameid)
 
 class MyWhooshSearcher(object):

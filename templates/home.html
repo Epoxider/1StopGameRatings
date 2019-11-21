@@ -25,16 +25,16 @@
   <div class="row">
     <div class="col">
     </div>
-      <div class="col-4">
+      <div class="col-5">
         <div style="text-align: center">
 
             <form method="get" action="{{ url_for('results') }}" class="form-inline my-2 my-sm-0">
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="searchterm">
-              <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
-              <select class="custom-select" name="searchtype" value="0">
+              <select class="custom-select" style="text-align: center" name="searchtype" value="0">
                 <option value="0">Whoosh!</option>
                 <option value="1">Custom</option>
               </select>
+              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="searchterm">
+              <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
            </form> 
 
           <!-- search box whe search is pushed it refreshes the page. need to take input from search box and run through
@@ -83,7 +83,7 @@
           <tr>
             <td>
                 <form method="get" action="{{url_for('game')}}">
-                  <button type="submit" name="game" class="btn btn-link" value="{{id}}">{{name}}</button>
+                  <button type="submit" name="game" class="btn btn-link" style="color:white" value="{{id}}">{{name}}</button>
                 </form>
             </td>
             <td>
