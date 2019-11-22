@@ -1,102 +1,85 @@
 import os
 import sys
-from bs4 import BeautifulSoup
-from lxml import etree
 import requests
-import csv
 import json
 import time
 
-def getPage(url):
-	page = requests.get(url)
-	return page
-
-def strip_ns(tree):
-    for node in tree.iter():
-        try:
-            has_namespace = node.tag.startswith('{')
-        except AttributeError:
-            continue
-        if has_namespace:
-            node.tag = node.tag.split('}', 1)[1]
-
-def main():
-    getAppListURL = "http://api.steampowered.com/ISteamApps/GetAppList/v2/?key=STEAMKEY&format=xml"
-    steamURL = "https://store.steampowered.com/app/"
+def getSteamInfo(appID):
     appDataURL = "https://store.steampowered.com/api/appdetails?appids="
-    ids = []
-    names = []
-    genres = []
+    appID = str(appID)
+    dataPage = requests.get(appDataURL+appID)
 
-	
-    print("\nScraping for appIDs...")
+    # Check if there have been too many requests
+    if dataPage.status_code != 200:
+        # Try again after 200 seconds
+        print("Error Code: " + str(dataPage.status_code) + " - Trying again...")
+        time.sleep(200)
+        dataPage = requests.get(appDataURL+appID)
+        # If response is still bad, skip the game
+        if dataPage.status_code != 200:
+            print("Skipping game with appID #" + appID)
+            return None
+    
+    gameJSON = dataPage.json()
 
-    rawPageAppList = getPage(getAppListURL)
+    # Check API response
+    if gameJSON[appID]["success"] == False or gameJSON[appID]["data"]["type"] != "game":
+        return None
 
-    root = etree.fromstring(rawPageAppList.content)
-    strip_ns(root)
-	
-    appIDs = root.xpath('/applist/apps/app/appid/text()')
-    appIDs.reverse()
+    # Title
+    title = gameJSON[appID]["data"]["name"]
 
-    f = open('games.csv', 'w')
+    # Description
+    description = gameJSON[appID]["data"]["short_description"]
 
-    with f:
-        writer = csv.writer(f)
+    # Genres (optional)
+    if "genres" in gameJSON[appID]["data"]:
+        genres = gameJSON[appID]["data"]["genres"]
+        if len(genres) != 0:
+            genreStr = genres[0]["description"]
+            for i in range(1, len(genres)):
+                genreStr = genreStr + "/" + genres[i]["description"]  
+            genres = genreStr
+    else:
+        genres = ""
 
-        # Write the headers for the csv file
-        headers = ["id","title","genres","price","image","steam_page","developer","publisher","release_date"]
-        writer.writerow(headers)
+    # Price (optional)
+    if "price_overview" in gameJSON[appID]["data"] and "final_formatted" in gameJSON[appID]["data"]["price_overview"]:
+        price = gameJSON[appID]["data"]["price_overview"]["final_formatted"]
+    else: 
+        price = ""
 
-        for appID in appIDs:
-            idStr = str(appID)
-            row = [appID]
-            dataPage = requests.get(appDataURL+idStr)
-            print(dataPage.status_code)
-            if dataPage.status_code == 429:
-                time.sleep(200)
-                dataPage = requests.get(appDataURL+idStr)
-            if dataPage.status_code != 200:
-                continue
-            gameJSON = dataPage.json()
-            if gameJSON[idStr]["success"] == True and gameJSON[idStr]["data"]["type"] == "game":
-                row.append(gameJSON[idStr]["data"]["name"])
-                if "genres" in gameJSON[idStr]["data"]:
-                    genres = gameJSON[idStr]["data"]["genres"]
-                    if len(genres) != 0:
-                        isFirst = True
-                        genreStr = genres[0]["description"]
-                        for genre in genres:
-                            if not isFirst:
-                                genreStr = genreStr + "/" + genre["description"]
-                            else:
-                                isFirst = False    
-                        row.append(genreStr)
-                else:
-                    row.append("")  
-                if "price_overview" in gameJSON[idStr]["data"] and "final_formatted" in gameJSON[idStr]["data"]["price_overview"]:
-                    row.append(gameJSON[idStr]["data"]["price_overview"]["final_formatted"])
-                else: 
-                    row.append("")
+    # Main image
+    image = gameJSON[appID]["data"]["header_image"]
+    
+    # Steam URL
+    url = "https://store.steampowered.com/app/"+appID
 
-                row.append(gameJSON[idStr]["data"]["header_image"])
-                row.append(steamURL+idStr)
+    # Developer (optional)
+    if "developers" in gameJSON[appID]["data"] and len(gameJSON[appID]["data"]["developers"]) != 0:
+        developers = gameJSON[appID]["data"]["developers"][0]
+    else: 
+        developers = ""
+    
+    # Publisher (optional)
+    if "publishers" in gameJSON[appID]["data"] and len(gameJSON[appID]["data"]["publishers"]) != 0:
+        publishers = gameJSON[appID]["data"]["publishers"][0]
+    else:
+        publishers = ""
 
-                if "developers" in gameJSON[idStr]["data"] and len(gameJSON[idStr]["data"]["developers"]) != 0:
-                    row.append(gameJSON[idStr]["data"]["developers"][0])
-                
-                if "publishers" in gameJSON[idStr]["data"] and len(gameJSON[idStr]["data"]["publishers"]) != 0:
-                    row.append(gameJSON[idStr]["data"]["publishers"][0])
+    # Release Date
+    if gameJSON[appID]["data"]["release_date"]["coming_soon"]:
+        release_date = "Unrealeased"
+    else:
+        release_date = gameJSON[appID]["data"]["release_date"]["date"]
 
-                if gameJSON[idStr]["data"]["release_date"]["coming_soon"]:
-                    row.append("Unrealeased")
-                else:
-                    row.append(gameJSON[idStr]["data"]["release_date"]["date"])
-                
-                writer.writerow(row)
-
-    f.close()
-    print("Done!") 
-
-if __name__ == '__main__':
-	main()
+    # Metacritic Score and URL
+    if "metacritic" in gameJSON[appID]["data"]:
+        metacritic_score = float(gameJSON[appID]["data"]["metacritic"]["score"])
+        metacritic_url = gameJSON[appID]["data"]["metacritic"]["url"]
+    else: 
+        metacritic_score = -1
+        metacritic_url = ""
+    
+    return title, description, genres, price, image, url, developers, publishers, release_date, metacritic_score, metacritic_url
+        
