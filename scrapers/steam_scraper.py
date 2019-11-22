@@ -10,10 +10,15 @@ def getSteamInfo(appID):
     dataPage = requests.get(appDataURL+appID)
 
     # Check if there have been too many requests
-    if dataPage.status_code == 429:
+    if dataPage.status_code != 200:
         # Try again after 200 seconds
+        print("Error Code: " + str(dataPage.status_code) + " - Trying again...")
         time.sleep(200)
         dataPage = requests.get(appDataURL+appID)
+        # If response is still bad, skip the game
+        if dataPage.status_code != 200:
+            print("Skipping game with appID #" + appID)
+            return None
     
     gameJSON = dataPage.json()
 
@@ -23,6 +28,9 @@ def getSteamInfo(appID):
 
     # Title
     title = gameJSON[appID]["data"]["name"]
+
+    # Description
+    description = gameJSON[appID]["data"]["short_description"]
 
     # Genres (optional)
     if "genres" in gameJSON[appID]["data"]:
@@ -67,11 +75,11 @@ def getSteamInfo(appID):
 
     # Metacritic Score and URL
     if "metacritic" in gameJSON[appID]["data"]:
-        metacritic_score = gameJSON[appID]["data"]["metacritic"]["score"]
+        metacritic_score = float(gameJSON[appID]["data"]["metacritic"]["score"])
         metacritic_url = gameJSON[appID]["data"]["metacritic"]["url"]
     else: 
         metacritic_score = -1
         metacritic_url = ""
     
-    return title, genres, price, image, url, developers, publishers, release_date, metacritic_score, metacritic_url
+    return title, description, genres, price, image, url, developers, publishers, release_date, metacritic_score, metacritic_url
         
