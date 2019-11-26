@@ -17,15 +17,29 @@ def buildSchema():
     indexer = create_in("indexdir", schema)
     writer = indexer.writer()
 
+    COMMENT_FIELD = 2  # 0-based
+    FIELDS_AFTER_COMMENT = 8
+
     with open("../db/games.csv", "r") as f:
         # Consume the title line
         titles = f.readline()
 
         for line in f:
-            parts = line.split(',')
-            appID = parts[0]
-            gameName = parts[1]
-            description = parts[2]
+            # There can be commends in the description (3rd field) and also comments
+            # in the release date (last field).  Deal with this by just stripping
+            # off the left 2 fields first (id, name), then strip from the right
+            # side.  If the last field ends with '"', then there is an extra comma.
+            leftparts = line.split(',',COMMENT_FIELD)
+            rightparts = leftparts[2].rsplit(",",FIELDS_AFTER_COMMENT-1)
+
+            # If the release date ends with '"', there is a comma in this field,
+            # so we have an extra command to deal with e.g. extra field
+            if rightparts[-1].strip().endswith('"'):
+                rightparts = leftparts[2].rsplit(",",FIELDS_AFTER_COMMENT)
+
+            appID = leftparts[0]
+            gameName = leftparts[1]
+            description = rightparts[0].strip('"')
 
             writer.add_document(id=appID,
                             title=gameName, 
