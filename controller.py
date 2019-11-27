@@ -7,6 +7,8 @@ from whoosh.fields import *
 from whoosh.qparser import QueryParser
 from whoosh.qparser import MultifieldParser
 from whoosh import qparser
+# from whoosh_search.py import whooshSearcher
+# from custom_search.py import customSearcher
 
 app = Flask(__name__)
 app.template_folder = 'templates'
@@ -23,28 +25,34 @@ def aboutus():
 
 @app.route('/results/', methods=['GET', 'POST'])
 def results():
-	# global whooshSearcher
+	# global MyWhooshSearcher
+	# global MyCustomSearcher
 	if request.method == 'POST':
 		data = request.form
 	else:
 		data = request.args
 
 	query = data.get('searchterm')
+
+	# TODO: Search
 	# customRank = data.get('searchtype')
 	# if customRank:
-	# 	results = customSearcher.search(query)
+	# 	results = MyCustomSearcher.search(query)
 	# else:
-	# 	results = whooshSearcher.search(query)
+	# 	results = MyWhooshSearcher.search(query)
 
 	page, per_page, offset = get_page_args(page_parameter='page',per_page_parameter='per_page')
 
+	##### DUMMY DATA: #####
 	ids = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ,13, 14)
 	names = ("Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game")
 	ratings = ("Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating")
+	results = [ids, names, ratings]
+	#######################
 
-	total = len(ids)
+	total = len(results[0])
 
-	pagination_results = zip(ids[offset: offset + per_page], names[offset: offset + per_page], ratings[offset: offset + per_page])
+	pagination_results = zip(results[0][offset: offset + per_page], results[1][offset: offset + per_page], results[2][offset: offset + per_page]) 
 
 	pagination = Pagination(page=page, per_page=per_page, total=total, css_framework="bootstrap4")
  
@@ -55,44 +63,25 @@ def game():
 	print(request.args)
 	data = request.args
 	gameid = data.get('game')
-	#give id
-	#find id
-	#push game info to template
+	
+	# TODO: Use gameID to get game data
+	# gameInfo = getGameInfo(gameid)
+
+	# TODO: Use game data to get top 3 related games
+	# related_games = MyWhooshSearcher.getRelatedGames(gameInfo["genres"], gameInfo["price"], gameInfo["developer"], gameInfo["release_date"])
+
+	# TODO: Pass all game data to the game page
+	# return render_template('gamepage.html', title=gameInfo["title"], description=gameInfo["description"], genres=gameInfo["genres"], price=gameInfo["price"], image=gameInfo["image"], steam_url=gameInfo["steam_url"], developer=gameInfo["developer"], publisher=gameInfo["publisher"], release_date=gameInfo["release_date"], metacritic_score=gameInfo["metacritic_score"], metacritic_url=gameInfo["metacritic_url"], ign_score=gameInfo["ign_score"], ign_url=gameInfo["ign_url"], pcgamer_score=gameInfo["pcgamer_score"], pcgamer_url=gameInfo["pcgamer_url"], average=gameInfo["average"] )
 	return render_template('gamepage.html', gameid=gameid)
 
-class MyWhooshSearcher(object):
-	"""docstring for MyWhooshSearcher"""
-	def __init__(self):
-		super(MyWhooshSearcher, self).__init__()
-		
-		
-	def search(self, queryEntered):
-		title = list()
-		description = list()
-		with self.indexer.searcher() as search:
-			query = MultifieldParser(['title', 'description'], schema=self.indexer.schema)
-			query = query.parse(queryEntered)
-			results = search.search(query, limit=None)
-			
-			for x in results:
-				title.append(x['title'])
-				description.append(x['description'])
-			
-		return title, description
-
-	def index(self):
-		schema = Schema(id=ID(stored=True), title=TEXT(stored=True), description=TEXT(stored=True))
-		indexer = create_in('myIndex', schema)
-		writer = indexer.writer()
-
-		writer.add_document(id=u'1', title=u'hello there', description=u'cs hello, how are you')
-		writer.add_document(id=u'2', title=u'hello bye', description=u'nice to meetcha')
-		writer.commit()
-
-		self.indexer = indexer
-
 if __name__ == '__main__':
-	# global whooshSearcher
-	# whooshSearcher = MyWhooshSearcher()
-	# whooshSearcher.index()
+	# TODO: Initialize two search classes and create indices for both
+	# global MyWhooshSearcher
+	# global MyCustomSearcher
+
+	# MyWhooshSearcher = whooshSearcher()
+	# MyWhooshSearcher.index()
+
+	# MyCustomSearcher = customSearcher()
+	# MyCustomSearcher.index()
 	app.run(debug=True)
