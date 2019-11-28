@@ -16,21 +16,15 @@ fileLines.pop(0)
 gameDict = {}
 averageLength = 0.0
 
-COMMENT_FIELD = 2  # 0-based
-FIELDS_AFTER_COMMENT = 8
-
 for line in fileLines:
-    # There can be commends in the description (3rd field) and also comments
-    # in the release date (last field).  Deal with this by just stripping
-    # off the left 2 fields first (id, name), then strip from the right
-    # side.  If the last field ends with '"', then there is an extra comma.
-    leftparts = line.split(',',COMMENT_FIELD)
-    rightparts = leftparts[2].rsplit(",",FIELDS_AFTER_COMMENT-1)
-    if rightparts[-1].strip().endswith('"'):
-        rightparts = leftparts[2].rsplit(",",FIELDS_AFTER_COMMENT)
-    id = leftparts[0]
-    name = leftparts[1]
-    desc = rightparts[0].strip('"')
+    parts = line.strip().split(',')
+
+    id = parts[0]
+    name = parts[1]
+    desc = parts[2]
+
+    name = name.replace("&#44;", ",") 
+    desc = desc.replace("&#44;", ",") 
 
     gameDict[id] = {'name':name, 'description' : desc, 'line' : line}
     averageLength += float(len(desc.split()))
