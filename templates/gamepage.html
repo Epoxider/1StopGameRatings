@@ -25,7 +25,7 @@
     <a class="btn btn-transparent text-white" href="https://www.pcgamer.com" role="button">PC Gamer</a>
   </div>
     <!-- have name of Game scraped put here-->
-  <h1 style="text-align: center; "id=Gamename"></br>{{gameid}}</br></br></h1>
+  <h1 style="text-align: center; "id=Gamename"></br>{{title}}</br></br></h1>
 
   </div>
 
@@ -40,12 +40,12 @@
         <div class="card-body" style="background-color: #7B4BBF !important">
           <h5 class="card-title roboto">Game Info:</h5>
           <ul class="list-group list-group-flush ">
-            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gameid"> ID: ...</li>
-            <li class="list-group-item" style="background-color: #7B4BBF !important"id="Gamegenre"> Genre: ... </li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gamereleasedate"> Release Date: ...</li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gamedeveloper"> Developer: ...</li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gamepublisher"> Publisher: ...</li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gameprice"> Price: $...</li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gameid"> <a style="color: white; text-decoration: underline" href="{{steam_url}}"> Steam Link </a> </li>
+            <li class="list-group-item" style="background-color: #7B4BBF !important"id="Gamegenre"> Genres: <strong> {{genres}} </strong>  </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gamereleasedate"> Release Date: <strong> {{release_date}} </strong> </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gamedeveloper"> Developer: <strong> {{developer}} </strong> </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gamepublisher"> Publisher: <strong> {{publisher}} </strong> </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important"id="Gameprice"> Price: <strong> {{price}} </strong> </li>
 
           </ul>
         </div>
@@ -69,14 +69,14 @@
     <div class="col-6">
       <div style="text-align: center">
 
-              <img src="computerimg.png" class="d-block w-100" id="Gameimg">
+              <img src="{{image}}" class="d-block w-100" id="Gameimg">
 
 
         </br>
           <div class="card" style=" border-color:  #FF0AC2 !important" >
             <div class="card-body" style="background-color: #7B4BBF !important">
               <h5 class="card-title roboto"id="Gamedescritprion">Description:</h5>
-          <li class="list-group-item "style="background-color: #7B4BBF !important"> ...</li>
+          <li class="list-group-item "style="background-color: #7B4BBF !important"> {{description}}</li>
               </ul>
             </div>
           </div>
@@ -90,19 +90,18 @@
           <h5 class="card-title roboto">Ratings:</h5>
           <ul class="list-group list-group-flush ">
 
-      <li class="list-group-item"  style="background-color: #7B4BBF !important"id="steam"> Steam Link: ...</li>
-      <li class="list-group-item"  style="background-color: #7B4BBF !important"id="metacritic"> Metacritic Link: ...</li>
-      <li class="list-group-item"  style="background-color: #7B4BBF !important"id="ign"> IGN Link: ...</li>
-      <li class="list-group-item"  style="background-color: #7B4BBF !important"id="pcgamer"> PC Gamer Link: ...</li>
+      <li class="list-group-item"  style="background-color: #7B4BBF !important"id="metacritic"> Metacritic: <a style="color: white; text-decoration: underline" href="{{metacritic_url}}"> {{metacritic_score}} </a> </li>
+      <li class="list-group-item"  style="background-color: #7B4BBF !important"id="ign"> IGN: <a style="color: white; text-decoration: underline" href="{{ign_url}}"> {{ign_score}} </a> </li>
+      <li class="list-group-item"  style="background-color: #7B4BBF !important"id="pcgamer"> PC Gamer: <a style="color: white; text-decoration: underline" href="{{pcgamer_url}}"> {{pcgamer_score}} </a> </li>
           </ul>
         </div>
       </div>
 </br>
       <div class="card" style=" border-color:  #FF0AC2 !important" >
         <div class="card-body" style="background-color: #7B4BBF !important" >
-          <h5 class="card-title roboto">Avrage Rating:</h5>
+          <h5 class="card-title roboto">Average Rating:</h5>
           <ul class="list-group list-group-flush ">
-            <li class="list-group-item "style="background-color: #7B4BBF !important" id="gameavrrating"> rating </li>
+            <li class="list-group-item "style="font-size: 48px; background-color: #7B4BBF !important; " id="gameavrrating"> <strong> {{average}} </strong> </li>
 
           </ul>
         </div>

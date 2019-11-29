@@ -1,17 +1,8 @@
 from flask import Flask, render_template, url_for, request
 from flask_paginate import Pagination, get_page_args
-#import whoosh
-#from whoosh.index import create_in
-#from whoosh.index import open_dir
-#from whoosh.fields import *
-#from whoosh.qparser import QueryParser
-#from whoosh.qparser import MultifieldParser
-#from whoosh import qparser
-# from whoosh_search.py import whooshSearcher
-from custom_search import customSearcher
-import csv
-
+from custom.custom_search import customSearcher
 from searcher_whoosh.whoosh_search import WhooshSearch
+import csv
 
 print("Building Whoosh index.... takes a while")
 totalResults = 50
@@ -20,7 +11,6 @@ print("Done building Whoosh index")
 
 app = Flask(__name__)
 app.template_folder = 'templates'
-
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/', methods=['GET', 'POST'])
@@ -45,19 +35,9 @@ def results():
 	if data.get('searchtype') == '0':
 	    results = global_whoosh.run_search(query)
 	else:
-	    results = [ (), (), () ]
-	    # results = global_bm25.run_search(query)
-
-	# TODO: Search
-	customRank = data.get('searchtype')
-	if customRank:
-		ids, names, ratings = MyCustomSearcher.search(query)
-	# else:
-	# 	results = MyWhooshSearcher.search(query)
+	    results = MyCustomSearcher.search(query)
 
 	page, per_page, offset = get_page_args(page_parameter='page',per_page_parameter='per_page')
-
-	results = [ids, names, ratings]
 
 	total = len(results[0])
 
@@ -73,15 +53,26 @@ def game():
 	data = request.args
 	gameid = data.get('game')
 	
-	# TODO: Use gameID to get game data
-	# gameInfo = getGameInfo(gameid)
+	gameInfo = MyCustomSearcher.getDocInfo(gameid)
+	metacriticScore = gameInfo[10]
+	if float(metacriticScore) == -1:
+		metacriticScore = 'N/A'
+	ignScore = gameInfo[12]
+	if float(ignScore) == -1:
+		ignScore = 'N/A'
+	pcgamerScore = gameInfo[14]
+	if float(pcgamerScore) == -1:
+		pcgamerScore = 'N/A'
+	averageScore = gameInfo[16]
+	if float(averageScore) == -1:
+		averageScore = 'N/A'
+
 
 	# TODO: Use game data to get top 3 related games
 	# related_games = MyWhooshSearcher.getRelatedGames(gameInfo["genres"], gameInfo["price"], gameInfo["developer"], gameInfo["release_date"])
 
 	# TODO: Pass all game data to the game page
-	# return render_template('gamepage.html', title=gameInfo["title"], description=gameInfo["description"], genres=gameInfo["genres"], price=gameInfo["price"], image=gameInfo["image"], steam_url=gameInfo["steam_url"], developer=gameInfo["developer"], publisher=gameInfo["publisher"], release_date=gameInfo["release_date"], metacritic_score=gameInfo["metacritic_score"], metacritic_url=gameInfo["metacritic_url"], ign_score=gameInfo["ign_score"], ign_url=gameInfo["ign_url"], pcgamer_score=gameInfo["pcgamer_score"], pcgamer_url=gameInfo["pcgamer_url"], average=gameInfo["average"] )
-	return render_template('gamepage.html', gameid=gameid)
+	return render_template('gamepage.html', gameid=gameid, title=gameInfo[1], description=gameInfo[2], genres=gameInfo[3], price=gameInfo[4], image=gameInfo[5], steam_url=gameInfo[6], developer=gameInfo[7], publisher=gameInfo[8], release_date=gameInfo[9], metacritic_score=metacriticScore, metacritic_url=gameInfo[11], ign_score=ignScore, ign_url=gameInfo[13], pcgamer_score=pcgamerScore, pcgamer_url=gameInfo[15], average=averageScore )
 
 def getGameInfo(gameID):
 	with open('db/games.csv', 'r') as f:
