@@ -8,7 +8,8 @@ from whoosh.qparser import QueryParser
 from whoosh.qparser import MultifieldParser
 from whoosh import qparser
 # from whoosh_search.py import whooshSearcher
-# from custom_search.py import customSearcher
+from custom_search import customSearcher
+import csv
 
 app = Flask(__name__)
 app.template_folder = 'templates'
@@ -26,7 +27,7 @@ def aboutus():
 @app.route('/results/', methods=['GET', 'POST'])
 def results():
 	# global MyWhooshSearcher
-	# global MyCustomSearcher
+	global MyCustomSearcher
 	if request.method == 'POST':
 		data = request.form
 	else:
@@ -35,20 +36,15 @@ def results():
 	query = data.get('searchterm')
 
 	# TODO: Search
-	# customRank = data.get('searchtype')
-	# if customRank:
-	# 	results = MyCustomSearcher.search(query)
+	customRank = data.get('searchtype')
+	if customRank:
+		ids, names, ratings = MyCustomSearcher.search(query)
 	# else:
 	# 	results = MyWhooshSearcher.search(query)
 
 	page, per_page, offset = get_page_args(page_parameter='page',per_page_parameter='per_page')
 
-	##### DUMMY DATA: #####
-	ids = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ,13, 14)
-	names = ("Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game", "Game")
-	ratings = ("Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating", "Rating")
 	results = [ids, names, ratings]
-	#######################
 
 	total = len(results[0])
 
@@ -74,14 +70,34 @@ def game():
 	# return render_template('gamepage.html', title=gameInfo["title"], description=gameInfo["description"], genres=gameInfo["genres"], price=gameInfo["price"], image=gameInfo["image"], steam_url=gameInfo["steam_url"], developer=gameInfo["developer"], publisher=gameInfo["publisher"], release_date=gameInfo["release_date"], metacritic_score=gameInfo["metacritic_score"], metacritic_url=gameInfo["metacritic_url"], ign_score=gameInfo["ign_score"], ign_url=gameInfo["ign_url"], pcgamer_score=gameInfo["pcgamer_score"], pcgamer_url=gameInfo["pcgamer_url"], average=gameInfo["average"] )
 	return render_template('gamepage.html', gameid=gameid)
 
+def getGameInfo(gameID):
+	with open('db/games.csv', 'r') as f:
+		gameReader = csv.reader(f)
+		for row in gameReader:
+			if row[0] == str(gameID):
+				f.close()
+				return row
+	f.close()
+	return None
+
+def getScoreInfo(gameID):
+	with open('db/scores.csv', 'r') as f:
+		gameReader = csv.reader(f)
+		for row in gameReader:
+			if row[0] == str(gameID):
+				f.close()
+				return row
+	f.close()
+	return None
+
 if __name__ == '__main__':
 	# TODO: Initialize two search classes and create indices for both
 	# global MyWhooshSearcher
-	# global MyCustomSearcher
+	global MyCustomSearcher
 
 	# MyWhooshSearcher = whooshSearcher()
 	# MyWhooshSearcher.index()
 
-	# MyCustomSearcher = customSearcher()
-	# MyCustomSearcher.index()
+	MyCustomSearcher = customSearcher()
+	MyCustomSearcher.index()
 	app.run(debug=True)
