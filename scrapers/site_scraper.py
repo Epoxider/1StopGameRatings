@@ -59,6 +59,7 @@ def getPCGamerReview(game):
 
         try:
             rating = float(rating.text)
+            rating /= 10.0
         except Exception:
             rating = rating.text
         return rating, pcURL

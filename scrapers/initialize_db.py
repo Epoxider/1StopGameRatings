@@ -46,22 +46,15 @@ def convertTitleForReviewSites(title):
 def calculateAverageRating(metacritic, ign, pcgamer):
     # Attempts to calculate a weighted average for ratings
     # If all are -1 (N/A), return -1
-    if metacritic == -1 and ign == -1 and pcgamer == -1:
-        return -1
-    metacritic_scale = 0.25*int(metacritic != -1)
-    pcgamer_scale = 0.25*int(pcgamer != -1)
-    ign_scale = 0.5*int(ign != -1)
-    ign *= 10
-    combined_scale = metacritic_scale+pcgamer_scale+ign_scale
+    if float(metacritic) < 0.0 and float(ign) < 0.0 and float(pcgamer) < 0.0:
+        return -1.0
+    metacritic_scale = 0.25*int(float(metacritic) >= 0.0)
+    pcgamer_scale = 0.25*int(float(pcgamer) >= 0.0)
+    ign_scale = 0.5*int(float(ign) >= 0.0)
 
-    if metacritic == -1:
-        metacritic = 0
-    if pcgamer == -1:
-        pcgamer = 0
-    if ign == -1:
-        ign = 0
+    combined_scale = metacritic_scale + pcgamer_scale + ign_scale
 
-    averageRating = metacritic_scale*metacritic+pcgamer_scale*pcgamer+ign_scale*ign
+    averageRating = metacritic_scale*metacritic + pcgamer_scale*pcgamer + ign_scale*ign
     averageRating /= combined_scale
 
     return averageRating
@@ -93,6 +86,20 @@ def main():
             if not result:
                 continue
             title, description, genres, price, img, url, dev, pub, date, meta_score, meta_url = result
+            title = title.replace(',', '&#44;').strip().strip('"')
+            description = description.replace(',', '&#44;').strip().strip('"')
+            genres = genres.replace(',', '&#44;').strip().strip('"')
+            price = price.replace(',', '&#44;').strip().strip('"')
+            img = img.replace(',', '&#44;').strip().strip('"')
+            url = url.replace(',', '&#44;').strip().strip('"')
+            dev = dev.replace(',', '&#44;').strip().strip('"')
+            pub = pub.replace(',', '&#44;').strip().strip('"')
+            date = date.replace(',', '&#44;').strip().strip('"')
+            meta_url = meta_url.replace(',', '&#44;').strip().strip('"')
+
+            meta_score = float(meta_score)
+            if meta_score >= 0.0:
+                meta_score /= 10.0
 
             # Get Ratings and URLs
             reviewTitle = convertTitleForReviewSites(title)

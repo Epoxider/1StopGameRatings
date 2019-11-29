@@ -1,15 +1,22 @@
 from flask import Flask, render_template, url_for, request
 from flask_paginate import Pagination, get_page_args
-import whoosh
-from whoosh.index import create_in
-from whoosh.index import open_dir
-from whoosh.fields import *
-from whoosh.qparser import QueryParser
-from whoosh.qparser import MultifieldParser
-from whoosh import qparser
+#import whoosh
+#from whoosh.index import create_in
+#from whoosh.index import open_dir
+#from whoosh.fields import *
+#from whoosh.qparser import QueryParser
+#from whoosh.qparser import MultifieldParser
+#from whoosh import qparser
 # from whoosh_search.py import whooshSearcher
 from custom_search import customSearcher
 import csv
+
+from searcher_whoosh.whoosh_search import WhooshSearch
+
+print("Building Whoosh index.... takes a while")
+totalResults = 50
+global_whoosh = WhooshSearch(totalResults)
+print("Done building Whoosh index")
 
 app = Flask(__name__)
 app.template_folder = 'templates'
@@ -26,14 +33,20 @@ def aboutus():
 
 @app.route('/results/', methods=['GET', 'POST'])
 def results():
-	# global MyWhooshSearcher
 	global MyCustomSearcher
+	global global_whoosh
 	if request.method == 'POST':
 		data = request.form
 	else:
 		data = request.args
 
 	query = data.get('searchterm')
+
+	if data.get('searchtype') == '0':
+	    results = global_whoosh.run_search(query)
+	else:
+	    results = [ (), (), () ]
+	    # results = global_bm25.run_search(query)
 
 	# TODO: Search
 	customRank = data.get('searchtype')
