@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title id=Gamename">Name of Game </title>
+  <title id=Gamename"> {{title}} </title>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -55,11 +55,32 @@
         <div class="card-body" style="background-color: #7B4BBF !important" >
           <h5 class="card-title roboto">Related Games:</h5>
           <ul class="list-group list-group-flush ">
-            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name1"> Link to Game 1 </li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name2"> Link to Game 2 </li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name3"> Link to Game 3 </li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name4"> Link to Game 4 </li>
-            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name5"> Link to Game 5 </li>
+            
+            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name1"> 
+                <form method="get" action="{{url_for('game')}}">
+                    <button type="submit" name="game" class="btn btn-link" style="color:white" value="{{related_games[0][0]}}">{{related_games[0][1]}}</button>
+                </form>
+            </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name1"> 
+                <form method="get" action="{{url_for('game')}}">
+                    <button type="submit" name="game" class="btn btn-link" style="color:white" value="{{related_games[1][0]}}">{{related_games[1][1]}}</button>
+                </form>
+            </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name1"> 
+                <form method="get" action="{{url_for('game')}}">
+                    <button type="submit" name="game" class="btn btn-link" style="color:white" value="{{related_games[2][0]}}">{{related_games[2][1]}}</button>
+                </form>
+            </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name1"> 
+                <form method="get" action="{{url_for('game')}}">
+                    <button type="submit" name="game" class="btn btn-link" style="color:white" value="{{related_games[3][0]}}">{{related_games[3][1]}}</button>
+                </form>
+            </li>
+            <li class="list-group-item "style="background-color: #7B4BBF !important" id="game_name1"> 
+                <form method="get" action="{{url_for('game')}}">
+                    <button type="submit" name="game" class="btn btn-link" style="color:white" value="{{related_games[4][0]}}">{{related_games[4][1]}}</button>
+                </form>
+            </li>
 
           </ul>
         </div>

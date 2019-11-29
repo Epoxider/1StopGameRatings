@@ -68,11 +68,13 @@ def game():
 		averageScore = 'N/A'
 
 
-	# TODO: Use game data to get top 3 related games
-	# related_games = MyWhooshSearcher.getRelatedGames(gameInfo["genres"], gameInfo["price"], gameInfo["developer"], gameInfo["release_date"])
+	relatedGameIDS = global_whoosh.getRelatedGames(gameid, gameInfo[3], gameInfo[4], gameInfo[7], gameInfo[9])
+	relatedGames = []
+	for relatedGameID in relatedGameIDS:
+		relatedGameTitle = MyCustomSearcher.getDocInfo(relatedGameID)[1]
+		relatedGames.append((relatedGameID, relatedGameTitle))
 
-	# TODO: Pass all game data to the game page
-	return render_template('gamepage.html', gameid=gameid, title=gameInfo[1], description=gameInfo[2], genres=gameInfo[3], price=gameInfo[4], image=gameInfo[5], steam_url=gameInfo[6], developer=gameInfo[7], publisher=gameInfo[8], release_date=gameInfo[9], metacritic_score=metacriticScore, metacritic_url=gameInfo[11], ign_score=ignScore, ign_url=gameInfo[13], pcgamer_score=pcgamerScore, pcgamer_url=gameInfo[15], average=averageScore )
+	return render_template('gamepage.html', title=gameInfo[1], description=gameInfo[2], genres=gameInfo[3], price=gameInfo[4], image=gameInfo[5], steam_url=gameInfo[6], developer=gameInfo[7], publisher=gameInfo[8], release_date=gameInfo[9], metacritic_score=metacriticScore, metacritic_url=gameInfo[11], ign_score=ignScore, ign_url=gameInfo[13], pcgamer_score=pcgamerScore, pcgamer_url=gameInfo[15], average=averageScore, related_games=relatedGames )
 
 def getGameInfo(gameID):
 	with open('db/games.csv', 'r') as f:
