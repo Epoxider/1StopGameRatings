@@ -17,6 +17,19 @@ class WhooshSearch(object):
         self.indexer = self.buildSchema()
         print("\nFinished building schema")
 
+    def getRelatedGames(self, gameID, genres, price, developer, date):
+        ids = list()
+
+        with self.indexer.searcher() as search:
+            query = "price:(" + price +") OR genres:(" + genres +") OR developer:(" + developer + ") OR release_date:(" + date + ") NOT id:" + str(gameID)
+            parser = MultifieldParser(['genres', 'price', 'developer', 'release_date'], schema=self.indexer.schema) 
+            query = parser.parse(query)
+            results = search.search(query, limit=5)
+            for x in results:
+                ids.append(x['id'])
+                
+        return ids
+
     def buildSchema(self):
         ngram_analyzer = False
 
@@ -34,6 +47,10 @@ class WhooshSearch(object):
             schema = Schema( id=ID(stored=True),
                      title=TEXT(stored=True),
                      description=TEXT(stored=True),
+                     genres=TEXT(stored=True),
+                     price=TEXT(stored=True),
+                     developer=TEXT(stored=True),
+                     release_date=TEXT(stored=True),  
                      IGN_rating=TEXT(stored=True),
                      PCGamer_rating=TEXT(stored=True),
                      MetaCritic_rating=TEXT(stored=True),
@@ -95,6 +112,10 @@ class WhooshSearch(object):
                 appID = parts[0]
                 gameName = parts[1]
                 description = parts[2]
+                genres = parts[3]
+                price = parts[4]
+                developer = parts[7]
+                release_date = parts[9]
 
                 gameName = gameName.replace("&#44;", ",") 
                 description = description.replace("&#44;", ",") 
@@ -102,6 +123,10 @@ class WhooshSearch(object):
                     writer.add_document(id=appID,
                                 title=gameName, 
                                 description=description,
+                                genres=genres,
+                                price=price,
+                                developer=developer,
+                                release_date=release_date,    
                                 IGN_rating=ratings_db[appID]['ign'],
                                 PCGamer_rating=ratings_db[appID]['pcgamer'],
                                 MetaCritic_rating=ratings_db[appID]['meta'],
