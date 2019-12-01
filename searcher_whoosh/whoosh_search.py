@@ -11,10 +11,10 @@ import json
 
 class WhooshSearch(object):
 
-    def __init__(self, max_results=50):
+    def __init__(self, max_results=50, ngram_analyzer=True):
         self.max_results = max_results
         print("\nBuilding schema... have patience")
-        self.indexer = self.buildSchema()
+        self.indexer = self.buildSchema(ngram_analyzer)
         print("\nFinished building schema")
 
     def getRelatedGames(self, gameID, genres, price, developer, date):
@@ -30,14 +30,17 @@ class WhooshSearch(object):
                 
         return ids
 
-    def buildSchema(self):
-        ngram_analyzer = False
+    def buildSchema(self, ngram_analyzer=True):
 
         if ngram_analyzer:
             analyzer = NgramWordAnalyzer(minsize = 3)
             schema = Schema( id=ID(stored=True),
                      title=TEXT(analyzer = analyzer,stored=True),
                      description=TEXT(analyzer = analyzer,stored=True),
+                     genres=TEXT(stored=True),
+                     price=TEXT(stored=True),
+                     developer=TEXT(stored=True),
+                     release_date=TEXT(stored=True),  
                      IGN_rating=TEXT(stored=True),
                      PCGamer_rating=TEXT(stored=True),
                      MetaCritic_rating=TEXT(stored=True),
