@@ -2,6 +2,7 @@ from whoosh.fields import Schema, TEXT, KEYWORD, ID, STORED
 from whoosh.index import create_in
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.qparser import MultifieldParser
+from whoosh.analysis import NgramWordAnalyzer
 import os
 
 import json
@@ -17,8 +18,20 @@ class WhooshSearch(object):
         print("\nFinished building schema")
 
     def buildSchema(self):
-    
-        schema = Schema( id=ID(stored=True),
+        ngram_analyzer = False
+
+        if ngram_analyzer:
+            analyzer = NgramWordAnalyzer(minsize = 3)
+            schema = Schema( id=ID(stored=True),
+                     title=TEXT(analyzer = analyzer,stored=True),
+                     description=TEXT(analyzer = analyzer,stored=True),
+                     IGN_rating=TEXT(stored=True),
+                     PCGamer_rating=TEXT(stored=True),
+                     MetaCritic_rating=TEXT(stored=True),
+                     average_rating=TEXT(stored=True),
+                     )
+        else:
+            schema = Schema( id=ID(stored=True),
                      title=TEXT(stored=True),
                      description=TEXT(stored=True),
                      IGN_rating=TEXT(stored=True),
@@ -26,7 +39,7 @@ class WhooshSearch(object):
                      MetaCritic_rating=TEXT(stored=True),
                      average_rating=TEXT(stored=True),
                      )
- 
+    
         if os.sep in __file__:
             path_parts = __file__.split(os.sep)[:-1]
             base_path = os.sep.join(path_parts)
@@ -85,8 +98,8 @@ class WhooshSearch(object):
 
                 gameName = gameName.replace("&#44;", ",") 
                 description = description.replace("&#44;", ",") 
-    
-                writer.add_document(id=appID,
+                if appID in ratings_db:
+                    writer.add_document(id=appID,
                                 title=gameName, 
                                 description=description,
                                 IGN_rating=ratings_db[appID]['ign'],
