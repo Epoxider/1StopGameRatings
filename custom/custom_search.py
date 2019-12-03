@@ -23,10 +23,11 @@ class customSearcher(object):
 			ids.append(docInfo[0])
 			names.append(docInfo[1])
 			rating = docInfo[16]
-			if float(rating) == -1:
+			rating = float(rating)
+			if rating == -1:
 				ratings.append('Not Rated')
 			else: 
-				ratings.append(rating)
+				ratings.append(round(rating, 1))
 
 		return ids, names, ratings
 

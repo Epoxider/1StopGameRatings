@@ -17,12 +17,14 @@ class WhooshSearch(object):
         self.indexer = self.buildSchema(ngram_analyzer)
         print("\nFinished building schema")
 
-    def getRelatedGames(self, gameID, genres, price, developer, date):
+    def getRelatedGames(self, gameID, genres, developer, date):
         ids = list()
+        date = date[-4:] # Only use the year
+        genres = genres.replace("/", " ")
 
         with self.indexer.searcher() as search:
-            query = "price:(" + price +") OR genres:(" + genres +") OR developer:(" + developer + ") OR release_date:(" + date + ") NOT id:" + str(gameID)
-            parser = MultifieldParser(['genres', 'price', 'developer', 'release_date'], schema=self.indexer.schema) 
+            query = "genres:(" + genres +") OR developer:(" + developer + ") OR release_date:(" + date + ") NOT id:" + str(gameID)
+            parser = MultifieldParser(['genres', 'developer', 'release_date'], schema=self.indexer.schema) 
             query = parser.parse(query)
             results = search.search(query, limit=5)
             for x in results:
@@ -94,6 +96,8 @@ class WhooshSearch(object):
                 average_score = parts[7]
                 if float(average_score) < 0.0:
                     average_score = "No Rating"
+                else:
+                    average_score = str(round(float(average_score),1))
 
                 ratings_db[appID] = {
                         'meta' : meta_rating,

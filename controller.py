@@ -55,20 +55,28 @@ def game():
 	
 	gameInfo = MyCustomSearcher.getDocInfo(gameid)
 	metacriticScore = gameInfo[10]
-	if float(metacriticScore) == -1:
-		metacriticScore = 'N/A'
 	ignScore = gameInfo[12]
-	if float(ignScore) == -1:
-		ignScore = 'N/A'
 	pcgamerScore = gameInfo[14]
-	if float(pcgamerScore) == -1:
-		pcgamerScore = 'N/A'
 	averageScore = gameInfo[16]
-	if float(averageScore) == -1:
+	if float(metacriticScore) == -1.0:
+		metacriticScore = 'N/A'
+	else:
+		metacriticScore = metacriticScore + " / 100"
+	if float(ignScore) == -1.0:
+		ignScore = 'N/A'
+	else:
+		ignScore = ignScore + " / 10"
+	if float(pcgamerScore) == -1.0:
+		pcgamerScore = 'N/A'
+	else:
+		pcgamerScore = pcgamerScore + " / 100"
+	if float(averageScore) == -1.0:
 		averageScore = 'N/A'
+	else:
+		averageScore = str(round(float(averageScore), 1)) + " / 100"
 
 
-	relatedGameIDS = global_whoosh.getRelatedGames(gameid, gameInfo[3], gameInfo[4], gameInfo[7], gameInfo[9])
+	relatedGameIDS = global_whoosh.getRelatedGames(gameid, gameInfo[3], gameInfo[7], gameInfo[9])
 	relatedGames = []
 	for relatedGameID in relatedGameIDS:
 		relatedGameTitle = MyCustomSearcher.getDocInfo(relatedGameID)[1]
